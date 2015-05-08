@@ -40,8 +40,22 @@ EOT
 
   #--- local devices
   [ -z "$parallelProcessing" ] && parallelProcessing=1
-  echo $aliases | xargs -n 1 -P${parallelProcessing}  $this_dir/logTemperature 
+    
+  for dev in $aliases
+  do
+  	
+  	dev_metric=$(dbGetAllMetricsForDeviceID $dev)
+  	
+  	for metric in $dev_metric
+  	do
+  	
+  		#$this_dir/logMetric $dev $metric
+  		echo $metric | xargs -n 1 -P${parallelProcessing}  $this_dir/logMetric $dev 
 
+  	done
+  	
+  done
+  
   for compositeDevice in $compositeDevices
   do
     curTemp=$($this_dir/getComposite $compositeDevice)

@@ -1,0 +1,63 @@
+#!/bin/bash 
+
+this_dir=$(cd `dirname $0`; pwd)
+this_script=$(basename $0)
+
+. $this_dir/functions
+. $this_dir/functions-sqlite3
+
+#--------------------------------
+# usage()
+#--------------------------------
+usage(){
+cat<<EOT
+
+Usage:
+
+  $this_script [ alias | /path/to/device | deviceAddress ] metric value
+  
+  for example:
+  $this_script 26.A1E97B000000 temperature
+  $this_script mycoolalias temperature
+  $this_script 26.A1E97B000000 humidity
+
+EOT
+}
+
+#================================
+# MAIN
+#================================
+[ -z "$1" ] && { usage ; exit 1 ; }
+[ -z "$2" ] && { usage ; exit 1 ; }
+
+action=standard
+[ -n "$3" ] && action=nolocalsensor
+
+
+#--- check the device
+case $action in
+  standard)
+   
+    #--- get the deviceId
+    curDevice=$(getDeviceIdByAny "$1")
+    [ -z "$curDevice" ] && { errorExit "There is no device $1" ; }
+   
+    #--- get the metric value
+    curValue=$(getMetric "$curDevice" "$2") 
+    [ -z "$curValue" ] && errorExit "Could not read $2 from $curDevice"
+    ;;
+  
+  nolocalsensor)
+    #--- no existing device (external device) -> then a metric value has to be passed as well
+    curDevice=$1
+    curMetric=$2
+    curValue=$3
+    ;;
+  
+  *)
+    errorExit "No action"
+    ;;
+esac
+
+logIt "  - Logging data for device $curDevice, metric: $2, value: $curValue"
+logMetric $curDevice $2 $curValue

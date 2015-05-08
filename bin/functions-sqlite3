@@ -101,6 +101,15 @@ EOT
 }
 
 #---------------------------------
+# dbGetAllMetricsForDeviceID()
+#---------------------------------
+dbGetAllMetricsForDeviceID(){
+  sqlite3 $appDbFile<<EOT
+  select metric from devicemetric where id='$1';
+EOT
+}
+
+#---------------------------------
 # dbGetAllDeviceIds()
 #---------------------------------
 dbGetAllDeviceIds(){

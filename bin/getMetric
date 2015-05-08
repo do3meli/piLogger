@@ -31,11 +31,10 @@ case $1 in
     ;;
   -rrd)
     [ -n "$debug" ] && logIt "device: $2"
-    getLastRRDUpdate $2
+    getLastRRDUpdate $2 $3
     exit 0
     ;;
    *)
-    curDevice=$1
-    getTemperature $curDevice
+    getMetric $1 $2
     ;;
 esac
