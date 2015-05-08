@@ -92,11 +92,11 @@ case $par2 in
           esac
           ;;
 
-        temperature)
+        *)
           case $par1 in
             all) echo "Not yet implemented" ;;
               *)
-                /home/pi/piLogger/bin/getTemperature -rrd $par1
+                /home/pi/piLogger/bin/getMetric -rrd $par1
               ;;
           esac
           ;;
